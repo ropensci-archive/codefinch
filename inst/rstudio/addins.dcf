@@ -1,0 +1,4 @@
+Name: Codefinch
+Description: Tweet screenshots of your code.
+Binding: codefinch_app
+Interactive: true
