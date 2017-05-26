@@ -63,7 +63,7 @@ codefinch_app <- function(){
       
       req <- POST("https://api.twitter.com/1.1/statuses/update_with_media.json",
                   config(token = twitter_token), body = list(
-                    status = input$status_box,
+                    status = input$status,
                     media = upload_file(img_path)
                   ))
       

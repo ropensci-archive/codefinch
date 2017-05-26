@@ -1,6 +1,6 @@
 # codefinch
 
-Tweet images of your code with GitHub Gist links included from RStudio.
+Tweet images of your code with GitHub Gist links included.
 
 ## Install
 
