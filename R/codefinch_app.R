@@ -9,6 +9,7 @@ codefinch_app <- function(){
         fillCol(
           uiOutput("status_box"),
           textOutput("chars"),
+          textInput("gist_title", label = "Gist Name", width = "100%"),
           checkboxInput("gist_url", "Include Gist URL in Image?"),
           selectInput("highlight", "Select Highlight", choices = c(
             "default", "tango", "pygments", "kate", "monochrome",
@@ -21,7 +22,7 @@ codefinch_app <- function(){
     )
   )
 
-  server <- function(input, output){
+  server <- function(input, output, session){
     img_path <- tempfile(fileext = ".png")
 
     ctx <- getSourceEditorContext()
@@ -30,6 +31,8 @@ codefinch_app <- function(){
     writeLines(raw_code, path)
 
     gist_obj <- gist_create(path, browse = FALSE)
+    updateTextInput(session, "gist_title", 
+                    value = gist_obj$files[[1]]$filename)
 
     observeEvent(input$update_preview, ignoreNULL = FALSE, {
       ctx <- getSourceEditorContext()
@@ -45,7 +48,15 @@ codefinch_app <- function(){
                    gist_obj = gist_obj)
     })
 
+
     observeEvent(input$tweet_it, {
+      #If the user changed the filename update it now before tweeting.
+      if(input$gist_title != gist_obj$files[[1]]$filename){
+        gist_obj <- rename_files(gist_obj, 
+                                 list(path, input$gist_title))
+        update(gist_obj)
+      }
+      
       create_image(highlight = input$highlight, image_path = img_path,
                    include_gist_url = input$gist_url,
                    gist_obj = gist_obj)
@@ -54,6 +65,10 @@ codefinch_app <- function(){
                        key = "cpYmlaSCcBKFBf7icpDT9sJww",
                        secret = "x8pvQAfziT3vVb8A1cQQB1xSBYdZ2ZhuRs4hTzifwLtoQf2iRF"
       )
+  
+      gist_obj <- rename_files(gist = gist_obj, 
+                               list(path, input$gist_title))
+  
 
       twitter_token <- oauth1.0_token(oauth_endpoints("twitter"), app)
 
@@ -86,7 +101,7 @@ codefinch_app <- function(){
     })
 
     output$chars <- renderText({
-      paste0(140 - nchar(input$status),"/140")
+      140 - nchar(input$status)
     })
   }
 
