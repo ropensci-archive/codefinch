@@ -1,3 +1,7 @@
+# If you're thinking about using codefinch, you should probably be using [carbonate](https://github.com/yonicd/carbonate) instead!
+
+---
+
 # codefinch
 
 Tweet images of your code with GitHub Gist links included.
